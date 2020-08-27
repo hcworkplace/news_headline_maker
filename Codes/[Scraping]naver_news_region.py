@@ -2,16 +2,21 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
+import requests
+
+def crawrling(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    return soup
 
 soup_obj = []
 for date in range(20200817,20200827):
-    for num in range(1,50):
-        url = 'https://news.naver.com/main/list.nhn?mode=LS2D&sid2=256&sid1=102&mid=shm&date={}&page={}'.format(str(date), str(num))
+    for num in range(1,40):
+        url = 'https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=256&sid1=102&date={}&page={}'.format(str(date), str(num))
+        
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
         soup_obj.append(soup)
-
-#기간내의 기사들 50 페이지까지 soup 객체 list
 
 address_list = []
 for soup in soup_obj:
@@ -24,17 +29,20 @@ for soup in soup_obj:
 my_set = set(address_list) #집합set으로 변환
 address_list = list(my_set) #list로 변환 ##중복제거를 위해
 
+# #기간내의 기사들 50 페이지까지 soup 객체 list
+
+my_set = set(address_list) #집합set으로 변환
+address_list = list(my_set) #list로 변환 ##중복제거를 위해
 # 범위 내의 기사 본문 주소 list
-    
-soup_list = []
+
+print(len(address_list))
+# print(address_list)
+
 for news_address in address_list:
-    response = requests.get(news_address)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    soup_list.append(soup)
+    if news_address[:4] != 'http':
+        continue
+    soup = crawrling(news_address)
 
-# 위의 주소 하나의 soup 객체 list
-
-for soup in soup_list:
     title = soup.find('div', {'class','article_info'})
     if title == None:
         continue
@@ -48,7 +56,6 @@ for soup in soup_list:
                 'title' : news_title,
                 'content' : text,
             }
-
     # title, content 추출
 
     with open('./naver_news_region.csv', 'a', newline='',encoding='utf-8') as csvfile:
@@ -58,4 +65,4 @@ for soup in soup_list:
         # writer.writeheader()
         writer.writerow(news_data)
 
-    #csv파일로 내보내기~~
+    # csv파일로 내보내기~~
