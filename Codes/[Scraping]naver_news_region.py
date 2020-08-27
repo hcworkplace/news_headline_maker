@@ -4,8 +4,8 @@ import csv
 
 
 soup_obj = []
-for date in range(20200817,20200819):
-    for num in range(1,7):
+for date in range(20200817,20200827):
+    for num in range(1,50):
         url = 'https://news.naver.com/main/list.nhn?mode=LS2D&sid2=256&sid1=102&mid=shm&date={}&page={}'.format(str(date), str(num))
         response = requests.get(url)
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -36,7 +36,8 @@ for news_address in address_list:
 
 for soup in soup_list:
     title = soup.find('div', {'class','article_info'})
-
+    if title == None:
+        continue
     news_title = title.find("h3").text
 
     content = soup.find('div', {'class','_article_body_contents'})
@@ -50,7 +51,7 @@ for soup in soup_list:
 
     # title, content 추출
 
-    with open('./naver_news.csv', 'a', newline='',encoding='utf-8') as csvfile:
+    with open('./naver_news_region.csv', 'a', newline='',encoding='utf-8') as csvfile:
         fieldnames = ['title','content']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
