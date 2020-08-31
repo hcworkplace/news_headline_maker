@@ -3,3 +3,5 @@ from django.http import HttpRequest
 
 # Create your views here.
 
+def home(request):
+    return HttpRequest('Test Page')
