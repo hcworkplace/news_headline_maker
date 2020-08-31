@@ -13,3 +13,11 @@
 
 .ipynb_checkpoints
 __pycache__
+.DS_Store
+
+
+### Django ###
+**/db.sqlite3
+**/migrations/**
+!**/migrations/__init__.py
+
